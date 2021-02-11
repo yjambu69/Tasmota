@@ -1415,7 +1415,7 @@ void CmndDisplayMode(void)
     uint32_t last_display_mode = Settings.display_mode;
     Settings.display_mode = XdrvMailbox.payload;
 
-    if (Settings.display_model != 11) {
+    if (Settings.display_model != 11) { // don't clear display for sevenseg when change displaymode, to reduce blank screen.
       if (disp_subscribed != (Settings.display_mode &0x04)) {
         TasmotaGlobal.restart_flag = 2;  // Restart to Add/Remove MQTT subscribe
       } else {
