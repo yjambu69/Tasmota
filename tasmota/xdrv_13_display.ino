@@ -1415,22 +1415,24 @@ void CmndDisplayMode(void)
     uint32_t last_display_mode = Settings.display_mode;
     Settings.display_mode = XdrvMailbox.payload;
 
-    if (disp_subscribed != (Settings.display_mode &0x04)) {
-      TasmotaGlobal.restart_flag = 2;  // Restart to Add/Remove MQTT subscribe
-    } else {
-      if (last_display_mode && !Settings.display_mode) {  // Switch to mode 0
-        DisplayInit(DISPLAY_INIT_MODE);
-        if (renderer) renderer->fillScreen(bg_color);
-        else DisplayClear();
+    if (Settings.display_model != 11) {
+      if (disp_subscribed != (Settings.display_mode &0x04)) {
+        TasmotaGlobal.restart_flag = 2;  // Restart to Add/Remove MQTT subscribe
       } else {
-        DisplayLogBufferInit();
-        DisplayInit(DISPLAY_INIT_MODE);
+        if (last_display_mode && !Settings.display_mode) {  // Switch to mode 0
+          DisplayInit(DISPLAY_INIT_MODE);
+          if (renderer) renderer->fillScreen(bg_color);
+          else DisplayClear();
+        } else {
+          DisplayLogBufferInit();
+          DisplayInit(DISPLAY_INIT_MODE);
+        }
       }
     }
-  }
+   }
 #endif  // USE_DISPLAY_MODES1TO5
   ResponseCmndNumber(Settings.display_mode);
-}
+  }
 
 void CmndDisplayDimmer(void)
 {
