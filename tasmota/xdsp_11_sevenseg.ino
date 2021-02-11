@@ -393,6 +393,36 @@ void SevensegTime(boolean time_24)
   sevenseg[0]->writeDisplay();
 }
 
+void SevensegDate(boolean date_MMDD)
+{
+
+  uint day = RtcTime.day_of_month;
+  uint month = RtcTime.month;
+  uint16_t displayValue;
+
+  if (date_MMDD) {
+    displayValue = month * 100 + day;
+    }
+    else {
+      displayValue = day * 100 + month;
+    }
+
+
+  // Now print the date value to the display.
+  sevenseg[0]->print(displayValue, DEC);
+
+  // Add zero padding if 9 first day of month in case of DD/MM or 9 first month in case of MM/DD
+  if (displayValue < 999) {
+      sevenseg[0]->writeDigitNum(0, 0);
+  }
+
+  sevenseg[0]->writeDigitRaw(2, 2); // display colomn separator
+#ifdef USE_DISPLAY_SEVENSEG_COMMON_ANODE
+  bufferStuffer(0);
+#endif
+  sevenseg[0]->writeDisplay();
+}
+
 void SevensegRefresh(void)  // Every second
 {
   if (disp_power) {
@@ -404,8 +434,12 @@ void SevensegRefresh(void)  // Every second
         case 2:  // Time 24
           SevensegTime(true);
           break;
-        case 4:  // Mqtt
-        case 3:  // Local
+        case 3:  // Date DD/MM
+          SevensegDate(false);
+          break;
+        case 4: // Date MM/DD
+          SevensegDate(true);
+          break;
         case 5: {  // Mqtt
           SevensegLog();
           break;
